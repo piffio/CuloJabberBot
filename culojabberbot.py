@@ -61,6 +61,9 @@ class CuloBot(JabberBot):
 
         self._chat_autoconn = self.config.getboolean('Jabber', 'chatroom_autoconnect')
 
+        self.__prepend = '\n'
+        self.__append = None
+
         # Create the Jabber client
         super(CuloBot, self).__init__(username=self._user,
                 password=self._passwd,
@@ -69,6 +72,20 @@ class CuloBot(JabberBot):
         # Create the transmission client
         self.tc = TransmissionClient(config=self.config,
                 init_list=True)
+
+
+
+    ###
+    # Private Methods
+    ###
+    def __format_message(self, msg):
+        tmp_msg = ""
+        if self.__prepend:
+            tmp_msg += self.__prepend
+        tmp_msg += msg
+        if self.__append:
+            tmp_msg += self.__append
+        return tmp_msg
 
 
     ####################
@@ -127,50 +144,38 @@ class CuloBot(JabberBot):
     ###
     # Transmission Commands
     ###
+
     # List command
     @botcmd
-    def list(self, mess, args):
+    def tor_list(self, mess, args):
         """List torrents"""
         self.tc.update_torrent_list()
-        torrent_list = self.tc.get_list()
-
-        out_list = ""
-        for k, v in torrent_list.iteritems():
-            out_list = '%s%d - %s\n' % (out_list, k, v)
-
-        return out_list
+        return self.__format_message(self.tc.get_list_str())
 
     # Show details on a torrent
     @botcmd
-    def show_torrent(self, mess, args):
-        self.tc.update_torrent_list()
-        if self.tc.get_list() is None:
-            self.tc.update_torrent_list()
-
-        torrent_list = self.tc.get_list()
-        torrent_id = int(args)
-
-        torrent = torrent_list[torrent_id]
-        out_string = "%s" % (torrent.name)
-        if (torrent.progress == 100.0):
-            out_string = '%s - Finished! (Status: %s, Ratio: %s)' %\
-                    (out_string, torrent.status, torrent.ratio)
-        else:
-            out_string = '%s (Status: %s, Perc: %f, Ratio: %s)' %\
-                    (out_string, torrent.status, torrent.progress, torrent.ratio)
-        return out_string
+    def tor_info(self, mess, args):
+        return self.__format_message(self.tc.get_torrent_info(args))
 
     @botcmd
-    def pause_torrent(self, mess, args):
-        info = self.tc.stop(args)
-        out_string = ""
-        for idx in info:
-            for key in info[idx]:
-                out_string += str(key) + ": " + info[idx][key] + "\n"
+    def tor_pause(self, mess, args):
+        return self.__format_message(self.tc.stop(args))
 
     @botcmd
-    def start_torrent(self, mess, args):
-        return self.tc.start(args)
+    def tor_start(self, mess, args):
+        return self.__format_message(self.tc.start(args))
+
+    @botcmd
+    def tor_remove(self, mess, args):
+        return self.__format_message(self.tc.remove_torrent(args))
+
+    @botcmd
+    def tor_remove_data(self, mess, args):
+        return self.__format_message(self.tc.remove_torrent(args, True))
+
+    @botcmd
+    def tor_add(self, mess, args):
+        return self.__format_message(self.tc.add_torrent(args))
 
 # Init
 if __name__ == '__main__':
