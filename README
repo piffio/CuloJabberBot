@@ -1,0 +1,10 @@
+This projects requires the module pythonjabberbot
+to be installed on your machine.
+
+clone it, and run "sudo python setup.py install" in order
+to install it.
+
+Once this step will be completed, you will be able to run
+the bot with
+
+python culojabberbot.py

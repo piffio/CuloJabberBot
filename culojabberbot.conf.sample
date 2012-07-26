@@ -1,0 +1,18 @@
+# Configuration file for CuloJabberBot
+
+[Main]
+debug = True
+
+[Jabber]
+domain = <Jabber domain / Server to use>
+conference_domain = <Condference server>
+user = <Jabber username>
+pass = <Jabberr password>
+chatroom = <Chatroom to connect to>
+chatroom_autoconnect = <Autoconnect to the chatroom>
+
+[Transmission]
+host = <IP / hostname of the transmission server>
+port = <Transmission server port>
+user = <Transmission user>
+passwd = <Transmission password>
