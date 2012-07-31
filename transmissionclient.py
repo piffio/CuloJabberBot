@@ -46,7 +46,12 @@ class TransmissionClient:
                 if int(dict_info[id].progress) == 100:
                     out += '\n\tDate Done: ' + str(dict_info[id].date_done)
                 else:
-                    out += '\n\tETA: ' + str(dict_info[id].eta)
+                    out += '\n\tETA: ' + str(dict_info[id].format_eta())
+                file_list = dict_info[id].files()
+                out += "\nThis torrent has %d files:" % len(file_list)
+                for file in file_list:
+                    out += '\n\tName: ' + file_list[file]['name']
+                    out += '\tSize: ' + str(file_list[file]['size']) + 'B'
             out += '\n' 
         return out
 
